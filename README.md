@@ -49,6 +49,17 @@ The "Employee Management System" is a Java-based console application designed to
 
 ## Concepts Covered
 
+- **Database Connectivity:** The code connects to a MySQL database using JDBC.
+- **CRUD Operations:** The code performs Create, Read, Update, and Delete operations on an employee database.
+- **SQL Queries:** SQL queries are used to interact with the database.
+- **User Input:** The program accepts user input to add, search, update, or delete employee records.
+- **Menu System:** The code provides a menu-driven system to navigate through different options.
+- **Error Handling:** Exception handling is used to manage database-related exceptions.
+- **Looping:** The application runs in a loop until the user chooses to exit.
+- **Database Operations:** The code performs various operations like adding, searching, updating, and deleting records in a database.
+- **Object-Oriented Programming:** The code uses classes and methods to encapsulate and organize functionality.
+- **Separation of Concerns:** The Company class handles database operations, while the CompanyApp class manages user interaction.
+
 ## Usage
 
 1. Launch the application using the instructions provided in the "Getting Started" section.
