@@ -1,0 +1,2 @@
+# Employee-Management-System-Using JDBC
+ The "Employee Management System" is a Java-based console application designed to assist a company in managing its employee records. This project offers a set of features for performing basic employee management tasks, such as adding new employees, counting the total number of employees, searching for employees based on various criteria, updating employee details, and viewing the complete list of employees. It provides a simple menu-driven interface for users to interact with the database.
