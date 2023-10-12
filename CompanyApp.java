@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class CompanyApp {
@@ -26,14 +27,13 @@ public class CompanyApp {
 
     public void launch() {
 
+        com.connectToDatabase();
+
         while (true) {
             MenuItems();
             int choice = sc.nextInt();
-            com.execute();
             switch (choice) {
                 case 1:
-                    System.out.println("Enter Employee ID");
-                    int id4 = sc.nextInt();
                     System.out.println("Enter Employee Name");
                     String name = sc.next();
                     System.out.println("Enter Employee Salary");
@@ -43,10 +43,9 @@ public class CompanyApp {
                     System.out.println("Enter Employee Phone Num");
                     long phone = sc.nextLong();
 
-                    com.addEmployee(id4, name, salary, designation, phone);
+                    com.addEmployee(name, salary, designation, phone);
                     System.out.println("Employee Added Successfully");
                     System.out.println();
-                    com.closeexecute();
                     break;
 
                 case 2:
@@ -57,21 +56,18 @@ public class CompanyApp {
                     System.out.println("Enter Employee ID");
                     int id = sc.nextInt();
                     com.searchEmpBasedOnId(id);
-                    com.closeexecute();
                     break;
 
                 case 4:
                     System.out.println("Enter Employee Designation");
                     String designation1 = sc.next();
                     com.searchEmpBasedOnDesignation(designation1);
-                    com.closeexecute();
                     break;
 
                 case 5:
                     System.out.println("Enter Employee ID");
                     int id1 = sc.nextInt();
                     com.removeEmpByEid(id1);
-                    com.closeexecute();
                     break;
 
                 case 6:
@@ -89,26 +85,30 @@ public class CompanyApp {
                     break;
 
                 case 7:
-                    com.allDetails();
-                    com.closeexecute();
+                    // com.allDetails();
+                    List<Employee> employees = com.allDetails();
+                    for (Employee employee : employees) {
+                        System.out.println(employee.getId() + " | " + employee.getName() + " | " +
+                                employee.getDesignation() + " | " + employee.getSalary() + " | " + employee.getPhone());
+                    }
                     break;
 
                 case 8:
                     com.getEmpBySalDesc();
-                    com.closeexecute();
                     break;
 
                 case 9:
                     com.getEmpByDesignation();
-                    com.closeexecute();
                     break;
 
                 case 10:
                     com.getEmpOrderBySalaryandEname();
-                    com.closeexecute();
+                    com.disconnectFromDatabase();
                     break;
 
                 case 11:
+                    com.disconnectFromDatabase();
+                    System.out.println("Good Bye!!");
                     System.exit(0);
                     break;
 

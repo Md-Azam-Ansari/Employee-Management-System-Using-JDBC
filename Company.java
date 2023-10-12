@@ -3,6 +3,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Company {
 
@@ -22,255 +25,300 @@ public class Company {
         return address;
     }
 
-    static Connection con = null;
-    static PreparedStatement pst = null;
-    static ResultSet res = null;
+    private static Connection connection;
 
-    static String path = "com.mysql.cj.jdbc.Driver";
-    static String url = "jdbc:mysql://localhost:3306/Company";
-    static String user = "root", password = "admin";
-
-    public void execute() {
+    public void connectToDatabase() {
         try {
-            Class.forName(path);
-            con = DriverManager.getConnection(url, user, password);
+            String url = "jdbc:mysql://localhost:3306/Company";
+            String user = "root", password = "admin";
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url, user, password);
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void closeexecute() {
-        if (con != null) {
+    public void disconnectFromDatabase() {
+        if (connection != null) {
             try {
-                con.close();
+                connection.close();
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
 
-        if (pst != null) {
-            try {
-                pst.close();
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        if (res != null) {
-            try {
-                res.close();
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
     }
 
-    public void addEmployee(int id, String name, double salary, String designation, long phone) {
-        execute();
+    /**
+     * to generate random number for employee id
+     * 
+     * @return empid
+     */
+    private static int generateRandomEmpId() {
+        Random rand = new Random();
+        return 1000 + rand.nextInt(9000);
+    }
+
+    /**
+     * to add employees to the database
+     * 
+     * @param empid2
+     * 
+     * @param name
+     * @param salary
+     * @param designation
+     * @param phone
+     */
+    public void addEmployee(String name, double salary, String designation, long phone) {
+        int empid = generateRandomEmpId();
+        String insertQuery = "insert into employee values(?,?,?,?,?)";
         try {
-            pst = con.prepareStatement("insert into employee values(?,?,?,?,?)");
-            pst.setInt(1, id);
-            pst.setString(2, name);
-            pst.setDouble(3, salary);
-            pst.setString(4, designation);
-            pst.setLong(5, phone);
-            pst.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+            preparedStatement.setInt(1, empid);
+            preparedStatement.setString(2, name);
+            preparedStatement.setDouble(3, salary);
+            preparedStatement.setString(4, designation);
+            preparedStatement.setLong(5, phone);
+
+            int rowInserted = preparedStatement.executeUpdate();
+
+            if (rowInserted > 0) {
+                System.out.println("Employee added successfully");
+            } else {
+                System.err.println("Failed to add employee!!!");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        closeexecute();
     }
 
+    /**
+     * to count the number of employees present in the database
+     */
     public void countEmp() {
+        String countQuery = "select count(*) from employee";
         try {
-            pst = con.prepareStatement("select count(*) from employee");
-            res = pst.executeQuery();
+            PreparedStatement preparedStatemnt = connection.prepareStatement(countQuery);
+            ResultSet resultSet = preparedStatemnt.executeQuery();
 
-            while (res.next()) {
-                System.out.println(res.getInt(1));
+            while (resultSet.next()) {
+                System.out.println(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
-        closeexecute();
 
     }
 
+    /**
+     * to search employee based on salary
+     * 
+     * @param salary
+     */
     public void searchEmpBasedOnSal(double salary) {
+        String salQuery = "select * from employee where salary=?";
         try {
-            pst = con.prepareStatement("select * from employee where salary=?");
-            pst.setDouble(0, salary);
-            res = pst.executeQuery();
+            PreparedStatement preparedStatement = connection.prepareStatement(salQuery);
+            preparedStatement.setDouble(1, salary);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (res.next()) {
+            while (resultSet.next()) {
                 System.out.println(
                         "EmpId" + "\t" + "Name" + "\t" + "Salary" + "\t" + "Designation" + "\t" + "PhoneNumber");
-                System.out.println(res.getInt(1) + "\t" + res.getString(2) + "\t" + res.getString(3) + "\t"
-                        + res.getString(4) + "\t" + res.getLong(5));
-            } else {
-                System.err.println("No employee found");
+                System.out.println(resultSet.getInt(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                        + "\t" + resultSet.getString(4) + "\t" + resultSet.getLong(5));
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        closeexecute();
     }
 
+    /**
+     * to search employee based on ID
+     * 
+     * @param id
+     */
     public void searchEmpBasedOnId(int id) {
+        String idQuery = "select * from employee where empid=?";
         try {
-            pst = con.prepareStatement("select * from employee where id=?");
-            pst.setInt(1, id);
-            res = pst.executeQuery();
+            PreparedStatement preparedStatement = connection.prepareStatement(idQuery);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (res.next()) {
+            if (resultSet.next()) {
                 System.out.println(
                         "EmpId" + "\t" + "Name" + "\t" + "Salary" + "\t" + "Designation" + "\t" + "PhoneNumber");
-                System.out.println(res.getInt(1) + "\t" + res.getString(2) + "\t" + res.getString(3) + "\t"
-                        + res.getString(4) + "\t" + res.getLong(5));
+                System.out.println(resultSet.getInt(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                        + "\t" + resultSet.getString(4) + "\t" + resultSet.getLong(5));
             } else {
                 System.err.println("No employee found");
             }
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
     }
 
+    /**
+     * to search employee based on Designation
+     * 
+     * @param designation
+     */
     public void searchEmpBasedOnDesignation(String designation) {
+        String desgQuery = "select * from employee where designation=?";
         try {
-            pst = con.prepareStatement("select * from employee where designation=?");
-            pst.setString(1, designation);
-            res = pst.executeQuery();
+            PreparedStatement preparedStatement = connection.prepareStatement(desgQuery);
+            preparedStatement.setString(1, designation);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (res.next()) {
+            if (resultSet.next()) {
                 System.out.println(
                         "EmpId" + "\t" + "Name" + "\t" + "Salary" + "\t" + "Designation" + "\t" + "PhoneNumber");
-                System.out.println(res.getInt(1) + "\t" + res.getString(2) + "\t" + res.getString(3) + "\t"
-                        + res.getString(4) + "\t" + res.getLong(5));
+                System.out.println(resultSet.getInt(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                        + "\t" + resultSet.getString(4) + "\t" + resultSet.getLong(5));
             } else {
                 System.err.println("No employee found");
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
     }
 
-    public void removeEmpByEid(int eid) {
-        execute();
+    /**
+     * to remove employee by employee id
+     * 
+     * @param id
+     */
+    public void removeEmpByEid(int id) {
+        String deleteQuery = "delete from employee where empid=?";
         try {
-            pst = con.prepareStatement("delete from employee where id=?");
-            pst.setInt(1, eid);
-            pst.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
             System.out.println("Record Deleted");
 
         } catch (SQLException e) {
 
             e.printStackTrace();
         }
-        closeexecute();
 
     }
 
+    /**
+     * to update employee details based on id
+     * 
+     * @param name
+     * @param salary
+     * @param designation
+     * @param phone
+     * @param id
+     */
     public void updateEmpById(String name, double salary, String designation, long phone, int id) {
+        String updateQuery = "update employee set name=?, salary=?, designation=?, phone=? where empid=? ";
         try {
-            pst = con.prepareStatement("update employee set name=?, salary=?, designation=?, phone=? where id=? ");
-            pst.setString(1, name);
-            pst.setDouble(2, salary);
-            pst.setString(3, designation);
-            pst.setLong(4, phone);
-            pst.setInt(5, id);
-            pst.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
+            preparedStatement.setString(1, name);
+            preparedStatement.setDouble(2, salary);
+            preparedStatement.setString(3, designation);
+            preparedStatement.setLong(4, phone);
+            preparedStatement.setInt(5, id);
+            preparedStatement.executeUpdate();
             System.out.println("Updated Record Successfully");
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    public void allDetails() {
-        execute();
-        try {
-            pst = con.prepareStatement("select * from employee");
-            res = pst.executeQuery();
+    /**
+     * to display all details
+     */
+    public List<Employee> allDetails() {
+        List<Employee> employees = new ArrayList<>();
+        String selectQuery = "SELECT * FROM employee";
 
-            while (res.next()) {
-                System.out.println(
-                        "EmpId" + "\t" + "Name" + "\t" + "Salary" + "\t" + "Designation" + "\t" + "PhoneNumber");
-                System.out.println(res.getInt(1) + "\t" + res.getString(2) + "\t" + res.getString(3) + "\t"
-                        + res.getString(4) + "\t" + res.getLong(5));
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                int empid = resultSet.getInt("empid");
+                String name = resultSet.getString("name");
+                double salary = resultSet.getDouble("salary");
+                String designation = resultSet.getString("designation");
+                long phone = resultSet.getLong("phone");
 
+                employees.add(new Employee(empid, name, salary, designation, phone));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        closeexecute();
+
+        return employees;
     }
 
+    /**
+     * to get details of employee based on salary (descending order)
+     */
     public void getEmpBySalDesc() {
+        String query = "select * from employee order by salary desc";
         try {
-            pst = con.prepareStatement("select * from employee order by salary desc");
-            res = pst.executeQuery();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (res.next()) {
+            while (resultSet.next()) {
                 System.out.println(
                         "EmpId" + "\t" + "Name" + "\t" + "Salary" + "\t" + "Designation" + "\t" + "PhoneNumber");
-                System.out.println(res.getInt(1) + "\t" + res.getString(2) + "\t" + res.getString(3) + "\t"
-                        + res.getString(4) + "\t" + res.getLong(5));
+                System.out.println(resultSet.getInt(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                        + "\t" + resultSet.getString(4) + "\t" + resultSet.getLong(5));
 
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
+    /**
+     * to search employee based on Designation
+     */
     public void getEmpByDesignation() {
+        String query = "select * from employee order by designation";
         try {
-            pst = con.prepareStatement("select * from employee order by designation");
-            res = pst.executeQuery();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (res.next()) {
+            while (resultSet.next()) {
                 System.out.println(
                         "EmpId" + "\t" + "Name" + "\t" + "Salary" + "\t" + "Designation" + "\t" + "PhoneNumber");
-                System.out.println(res.getInt(1) + "\t" + res.getString(2) + "\t" + res.getString(3) + "\t"
-                        + res.getString(4) + "\t" + res.getLong(5));
+                System.out.println(resultSet.getInt(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                        + "\t" + resultSet.getString(4) + "\t" + resultSet.getLong(5));
 
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
     }
 
+    /**
+     * to get employee name and salary (ascending order);
+     */
     public void getEmpOrderBySalaryandEname() {
+        String query = "select * from employee order by salary,name";
         try {
-            pst = con.prepareStatement("select * from employee order by salary,name");
-            res = pst.executeQuery();
-            while (res.next()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
                 System.out.println(
                         "EmpId" + "\t" + "Name" + "\t" + "Salary" + "\t" + "Designation" + "\t" + "PhoneNumber");
-                System.out.println(res.getInt(1) + "\t" + res.getString(2) + "\t" + res.getString(3) + "\t"
-                        + res.getString(4) + "\t" + res.getLong(5));
+                System.out.println(resultSet.getInt(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                        + "\t" + resultSet.getString(4) + "\t" + resultSet.getLong(5));
 
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    // void getEmpBySalDesc();
-    // void getEmpByDesignation();
-    // void getEmpOrderByAgeAndEname(); sort based on age is same based on name
-    // Implementation user define exception
 
 }

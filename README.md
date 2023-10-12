@@ -1,6 +1,6 @@
 # Employee-Management-System-Using JDBC
 
-The "Employee Management System" is a Java-based console application designed to assist a company in managing its employee records. This project offers a set of features for performing basic employee management tasks, such as adding new employees, counting the total number of employees, searching for employees based on various criteria, updating employee details, and viewing the complete list of employees. It provides a simple menu-driven interface for users to interact with the database.
+This is a simple Java-based Employee Management System that allows you to manage employee records within a company. It uses a MySQL database for data storage and retrieval. The system is implemented in Java, making use of JDBC for database connectivity.
 
 ## Table of Contents
 
@@ -15,8 +15,10 @@ The "Employee Management System" is a Java-based console application designed to
 
 - **Add Employees:** Easily add new employees to the company database.
 - **Count Employees:** Get the total count of employees currently employed.
-- **Search Employees:** Search for employees based on criteria such as ID, designation, and salary.
-- **Update Employee Information:** Modify employee details, including name, salary, designation, and phone number.
+- **Search by ID**: Search for an employee by their ID.
+- **Search by Designation**: Search for employees based on their designation.
+- **Remove Employee**: Remove an employee record based on their ID.
+- **Update Employee**: Update employee details, including their name, salary, designation, and phone number, based on their ID.
 - **View All Employee Details:** Display a complete list of all employees.
 - **Sort Employees:** Sort and display employee details based on various criteria in ascending or descending order.
 
@@ -25,7 +27,8 @@ The "Employee Management System" is a Java-based console application designed to
 ### Prerequisites
 
 - Java Development Kit (JDK)
-- MySQL Database (or another compatible database)
+- MySQL Database
+- MySQL Connector/J (JDBC Driver)
 
 ### Installation
 
