@@ -21,6 +21,9 @@ This is a simple Java-based Employee Management System that allows you to manage
 - **Update Employee**: Update employee details, including their name, salary, designation, and phone number, based on their ID.
 - **View All Employee Details:** Display a complete list of all employees.
 - **Sort Employees:** Sort and display employee details based on various criteria in ascending or descending order.
+- **Database Connectivity:** Establishes a connection to a MySQL database using JDBC to store and retrieve employee records.
+- **User Interface:** Provides a text-based menu-driven interface to interact with the Employee Management System.
+- **Random Employee ID Generation:** Generates unique employee IDs for each new employee record, ensuring uniqueness in the database.
 
 ## Getting Started
 
