@@ -1,5 +1,7 @@
 # Employee-Management-System-Using JDBC
 
+![Employee-Management-System Demo](Demo.mp4)
+
 This is a simple Java-based Employee Management System that allows you to manage employee records within a company. It uses a MySQL database for data storage and retrieval. The system is implemented in Java, making use of JDBC for database connectivity.
 
 ## Table of Contents
